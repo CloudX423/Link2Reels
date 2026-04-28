@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link2Reels - 登录</title>
+    <link href="https://fonts.googleapis.cn/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 380px;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo h1 {
+            font-size: 28px;
+            color: #6366f1;
+            margin-bottom: 8px;
+        }
+        .logo p {
+            color: #64748b;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #1e293b;
+            font-weight: 500;
+        }
+        input[type="password"] {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: #4f46e5; }
+        .btn:disabled { background: #94a3b8; cursor: not-allowed; }
+        .error {
+            color: #ef4444;
+            font-size: 14px;
+            margin-top: 12px;
+            text-align: center;
+            display: none;
+        }
+        .hint {
+            color: #94a3b8;
+            font-size: 12px;
+            margin-top: 16px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="logo">
+            <h1>Link2Reels</h1>
+            <p>Shopify 产品视频生成器</p>
+        </div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="password">访问密码</label>
+                <input type="password" id="password" placeholder="请输入密码" required autofocus>
+            </div>
+            <button type="submit" class="btn" id="loginBtn">登录</button>
+            <p class="error" id="errorMsg"></p>
+        </form>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        const form = document.getElementById('loginForm');
+        const password = document.getElementById('password');
+        const loginBtn = document.getElementById('loginBtn');
+        const errorMsg = document.getElementById('errorMsg');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorMsg.style.display = 'none';
+            loginBtn.disabled = true;
+            loginBtn.textContent = '登录中...';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: password.value })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    window.location.href = '/';
+                } else {
+                    errorMsg.textContent = data.error || '登录失败';
+                    errorMsg.style.display = 'block';
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = '登录';
+                    password.value = '';
+                    password.focus();
+                }
+            } catch (err) {
+                errorMsg.textContent = '网络错误，请重试';
+                errorMsg.style.display = 'block';
+                loginBtn.disabled = false;
+                loginBtn.textContent = '登录';
+            }
+        });
+    </script>
+</body>
+</html>

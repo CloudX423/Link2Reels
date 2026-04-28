@@ -1,0 +1,17 @@
+# Web Framework
+flask==3.0.0
+flask-cors==4.0.0
+
+# HTTP Requests & Parsing
+requests==2.31.0
+beautifulsoup4==4.12.2
+lxml==4.9.3
+
+# Image Processing
+Pillow==10.1.0
+
+# Video Generation
+moviepy==2.2.1
+
+# Utilities
+urllib3==2.1.0

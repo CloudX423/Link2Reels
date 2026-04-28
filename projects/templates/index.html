@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link2Reels - Shopify 产品视频生成器</title>
+    <link rel="preconnect" href="https://fonts.googleapis.cn">
+    <link rel="preconnect" href="https://fonts.gstatic.cn" crossorigin>
+    <link href="https://fonts.googleapis.cn/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #22c55e;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon svg {
+            width: 28px;
+            height: 28px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Step Indicator */
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .step-dot {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            background: var(--border);
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .step-number.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .step-number.done {
+            background: var(--success);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .step-label.active {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .step-line {
+            width: 60px;
+            height: 2px;
+            background: var(--border);
+            margin: 0 0.5rem;
+            align-self: center;
+        }
+
+        .step-line.active {
+            background: var(--primary);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary);
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 2.75rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #16a34a;
+        }
+
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        /* Product Info */
+        .product-info {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .product-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .product-price {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .product-url {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            word-break: break-all;
+        }
+
+        /* Image Grid */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .image-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .image-item:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .image-item.dragging {
+            opacity: 0.5;
+            border-color: var(--primary);
+            transform: scale(0.95);
+        }
+
+        .image-item.drag-over {
+            border-color: var(--success);
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .image-item img {
+            width: 100%;
+            aspect-ratio: 4/5;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-number {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 28px;
+            height: 28px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .image-actions {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .image-item:hover .image-actions {
+            opacity: 1;
+        }
+
+        .image-item.load-error img {
+            opacity: 0.3;
+        }
+
+        .image-item.load-error::after {
+            content: '加载失败';
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+        }
+
+        .image-action-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .image-action-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .image-action-btn.delete {
+            background: var(--error);
+            color: white;
+        }
+
+        .image-action-btn.delete:hover {
+            background: #dc2626;
+        }
+
+        .image-action-btn.drag {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            cursor: grab;
+        }
+
+        .image-action-btn.drag:active {
+            cursor: grabbing;
+        }
+
+        .drag-handle {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .image-item:hover .drag-handle {
+            opacity: 1;
+        }
+
+        .drag-bar {
+            width: 30px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 2px;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 1rem 0;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--success);
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 1rem;
+            color: var(--text-secondary);
+        }
+
+        .upload-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .upload-text strong {
+            color: var(--primary);
+        }
+
+        /* Options */
+        .options-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .option-item {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .option-item label {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        input[type="number"] {
+            padding-left: 1rem;
+        }
+
+        /* Actions */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+        }
+
+        /* Status */
+        .status-card {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .status-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status-icon.loading {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        .status-icon.success {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .status-icon.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .status-icon svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .status-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-text {
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Video Section */
+        .video-section {
+            margin-top: 1.5rem;
+        }
+
+        .video-container {
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .video-container video {
+            width: 100%;
+            max-height: 500px;
+            display: block;
+        }
+
+        .video-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .video-actions .btn {
+            flex: 1;
+        }
+
+        /* Preview Grid */
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .preview-item {
+            aspect-ratio: 4/5;
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--bg);
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .step-indicator {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .step-line {
+                width: 2px;
+                height: 20px;
+            }
+
+            .image-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .options-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <h1>Link2Reels</h1>
+            </div>
+            <p class="subtitle">将 Shopify 产品链接转换为精美的营销短视频</p>
+        </header>
+
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <div class="step-dot">
+                <div class="step-number active" id="step1Number">1</div>
+                <span class="step-label active" id="step1Label">抓取产品</span>
+            </div>
+            <div class="step-line" id="stepLine"></div>
+            <div class="step-dot">
+                <div class="step-number" id="step2Number">2</div>
+                <span class="step-label" id="step2Label">编辑图片</span>
+            </div>
+            <div class="step-line" id="stepLine2"></div>
+            <div class="step-dot">
+                <div class="step-number" id="step3Number">3</div>
+                <span class="step-label" id="step3Label">生成视频</span>
+            </div>
+        </div>
+
+        <!-- Step 1: URL Input -->
+        <div class="card" id="step1Card">
+            <div class="card-title">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                </svg>
+                输入产品链接
+            </div>
+
+            <form id="scrapeForm">
+                <div class="form-group">
+                    <label for="productUrl">Shopify 产品链接</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                        </svg>
+                        <input type="text" id="productUrl" placeholder="https://your-store.myshopify.com/products/product-name" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="scrapeBtn" style="width: 100%;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    抓取产品信息
+                </button>
+
+                <button type="button" class="btn btn-secondary" id="skipScrapeBtn" style="width: 100%; margin-top: 0.75rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                    </svg>
+                    跳过抓取，直接上传图片
+                </button>
+            </form>
+        </div>
+
+        <!-- Step 2: Image Editor -->
+        <div class="card hidden" id="step2Card">
+            <div class="card-title">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                编辑图片
+                <span style="font-weight: normal; color: var(--text-secondary); font-size: 0.875rem; margin-left: auto;">拖拽调整顺序</span>
+            </div>
+
+            <div class="product-info" id="productInfo">
+                <div class="product-title" id="productTitle"></div>
+                <div class="product-price">
+                    <span id="productPrice"></span>
+                    <input type="text" id="editPrice" placeholder="输入价格" style="margin-left: 0.5rem; padding: 0.25rem 0.5rem; border: 1px solid var(--border); border-radius: 4px; font-size: 1rem;">
+                </div>
+                <div class="product-url" id="productUrlDisplay"></div>
+            </div>
+
+            <div class="image-grid" id="imageGrid">
+            </div>
+
+            <!-- Audio Upload Section -->
+            <div class="audio-section" id="audioSection" style="margin: 1rem 0; padding: 1rem; background: var(--bg); border-radius: 8px;">
+                <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.75rem;">背景音乐</p>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-sm" id="useDefaultAudio" style="flex: 1; min-width: 120px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right: 0.25rem;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                        </svg>
+                        默认音乐
+                    </button>
+                    <button type="button" class="btn btn-sm btn-secondary" id="uploadAudioBtn" style="flex: 1; min-width: 120px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right: 0.25rem;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                        </svg>
+                        上传音乐
+                    </button>
+                    <button type="button" class="btn btn-sm btn-secondary hidden" id="removeAudioBtn" style="flex: 0 0 auto;">
+                        移除
+                    </button>
+                </div>
+                <div class="audio-preview hidden" id="audioPreview" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+                    <span id="audioName" style="flex: 1; font-size: 0.875rem;"></span>
+                </div>
+                <input type="file" id="audioInput" accept="audio/*" style="display: none;">
+            </div>
+
+            <div class="upload-area" id="uploadArea">
+                <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                <p class="upload-text">拖拽图片到此处或 <strong>点击上传</strong></p>
+                <p class="upload-text" style="font-size: 0.8rem; margin-top: 0.5rem;">支持 JPG, PNG, WebP</p>
+                <input type="file" id="fileInput" accept="image/*" multiple style="display: none;">
+            </div>
+
+            <div class="options-row">
+                <div class="option-item">
+                    <label for="duration">每张图片时长（秒）</label>
+                    <input type="number" id="duration" value="2.3" min="1" max="10" step="0.1">
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button type="button" class="btn btn-secondary" id="backToStep1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    重新抓取
+                </button>
+                <button type="button" class="btn btn-success" id="generateVideoBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    生成视频
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 3: Generating -->
+        <div class="card hidden" id="step3Card">
+            <div class="status-card">
+                <div class="status-icon loading" id="statusIcon">
+                    <div class="spinner"></div>
+                </div>
+                <div class="status-title" id="statusTitle">正在生成视频...</div>
+                <div class="status-text" id="statusText">这可能需要几秒钟，请稍候</div>
+            </div>
+
+            <div class="preview-grid hidden" id="previewGrid">
+                <!-- Preview images will be inserted here -->
+            </div>
+
+            <div class="video-section hidden" id="videoSection">
+                <div class="video-container">
+                    <video id="videoPlayer" controls></video>
+                </div>
+            </div>
+
+            <div class="video-actions" id="videoActions">
+                <button type="button" class="btn btn-secondary" id="backToEditBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    返回编辑
+                </button>
+                <a href="#" class="btn btn-success hidden" id="downloadBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    下载视频
+                </a>
+                <button type="button" class="btn btn-secondary" id="newVideoBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    重新开始
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let currentSessionId = null;
+        let currentTaskId = null;
+        let images = [];
+        let draggedItem = null;
+
+        // DOM Elements
+        const step1Card = document.getElementById('step1Card');
+        const step2Card = document.getElementById('step2Card');
+        const step3Card = document.getElementById('step3Card');
+        const scrapeForm = document.getElementById('scrapeForm');
+        const scrapeBtn = document.getElementById('scrapeBtn');
+        const skipScrapeBtn = document.getElementById('skipScrapeBtn');
+        const imageGrid = document.getElementById('imageGrid');
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const generateVideoBtn = document.getElementById('generateVideoBtn');
+        const backToStep1 = document.getElementById('backToStep1');
+        const newVideoBtn = document.getElementById('newVideoBtn');
+
+        // Step indicators
+        const step1Number = document.getElementById('step1Number');
+        const step2Number = document.getElementById('step2Number');
+        const step3Number = document.getElementById('step3Number');
+        const stepLine = document.getElementById('stepLine');
+        const stepLine2 = document.getElementById('stepLine2');
+
+        // Product info
+        const productTitle = document.getElementById('productTitle');
+        const productPrice = document.getElementById('productPrice');
+        const productUrlDisplay = document.getElementById('productUrlDisplay');
+
+        // Status
+        const statusIcon = document.getElementById('statusIcon');
+        const statusTitle = document.getElementById('statusTitle');
+        const statusText = document.getElementById('statusText');
+        const previewGrid = document.getElementById('previewGrid');
+        const videoSection = document.getElementById('videoSection');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        // Step 1: Scrape product
+        scrapeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const url = document.getElementById('productUrl').value.trim();
+
+            if (!url) return;
+
+            scrapeBtn.disabled = true;
+            scrapeBtn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2px;"></div> 抓取中...';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/session/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentSessionId = data.session_id;
+                    images = data.data.images;
+
+                    // Update product info
+                    productPrice.textContent = data.data.price || '未找到价格';
+                    editPrice.value = data.data.price || '';
+                    productUrlDisplay.textContent = url;
+
+                    // Render images
+                    renderImages();
+
+                    // Go to step 2
+                    goToStep(2);
+                } else {
+                    alert('抓取失败: ' + (data.error || '未知错误'));
+                }
+            } catch (error) {
+                alert('抓取失败: ' + error.message);
+            } finally {
+                scrapeBtn.disabled = false;
+                scrapeBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg> 抓取产品信息';
+            }
+        });
+
+        // Skip scrape - go directly to image upload
+        skipScrapeBtn.addEventListener('click', async () => {
+            // Create a new empty session
+            const createResponse = await fetch(`${API_BASE}/api/session/create`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: '' })
+            });
+
+            if (createResponse.ok) {
+                const data = await createResponse.json();
+                currentSessionId = data.session_id;
+
+                // Reset images array
+                images = [];
+
+                // Hide step1, show step2
+                step1Card.classList.add('hidden');
+                step2Card.classList.remove('hidden');
+
+                // Update step indicators
+                step1Number.classList.remove('active');
+                step2Number.classList.add('active');
+                stepLine.classList.add('completed');
+                stepLine2.classList.remove('completed');
+
+                // Clear product info
+                productTitle.textContent = '直接上传图片';
+                productPrice.textContent = '';
+                productUrlDisplay.textContent = '';
+
+                // Render empty image grid
+                renderImages();
+
+                // Show message
+                alert('请上传图片，支持拖拽排序和删除');
+            } else {
+                alert('创建会话失败，请重试');
+            }
+        });
+
+        // Render images grid
+        function renderImages() {
+            imageGrid.innerHTML = images.map((img, index) => {
+                // 判断是相对路径还是绝对 URL
+                let imgSrc = img.thumbnail_url || img.url || '';
+                
+                // 如果是相对路径（以 / 开头）
+                if (imgSrc.startsWith('/')) {
+                    imgSrc = imgSrc;
+                } else if (imgSrc && !imgSrc.startsWith('http')) {
+                    imgSrc = imgSrc;
+                }
+                
+                return `
+                <div class="image-item" draggable="true" data-id="${img.id}" data-index="${index}">
+                    <span class="image-number">${index + 1}</span>
+                    <div class="image-actions">
+                        <button class="image-action-btn delete" onclick="deleteImage('${img.id}')">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <img src="${imgSrc}" alt="Image ${index + 1}" 
+                         onerror="this.parentElement.classList.add('load-error')"
+                         crossorigin="anonymous">
+                    <div class="drag-handle">
+                        <div class="drag-bar"></div>
+                        <div class="drag-bar"></div>
+                        <div class="drag-bar"></div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            // Add drag event listeners
+            setupDragAndDrop();
+        }
+
+        // Drag and drop for reordering
+        function setupDragAndDrop() {
+            const items = imageGrid.querySelectorAll('.image-item');
+
+            items.forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragend', handleDragEnd);
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('drop', handleDrop);
+                item.addEventListener('dragleave', handleDragLeave);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedItem = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            document.querySelectorAll('.image-item').forEach(item => {
+                item.classList.remove('drag-over');
+            });
+            draggedItem = null;
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            if (this !== draggedItem) {
+                this.classList.add('drag-over');
+            }
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+
+            if (draggedItem && this !== draggedItem) {
+                const fromIndex = parseInt(draggedItem.dataset.index);
+                const toIndex = parseInt(this.dataset.index);
+
+                // Reorder in memory
+                const [moved] = images.splice(fromIndex, 1);
+                images.splice(toIndex, 0, moved);
+
+                // Update order on server
+                updateImageOrder();
+
+                // Re-render
+                renderImages();
+            }
+        }
+
+        async function updateImageOrder() {
+            try {
+                await fetch(`${API_BASE}/api/session/${currentSessionId}/images/reorder`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        image_ids: images.map(img => img.id)
+                    })
+                });
+            } catch (error) {
+                console.error('更新顺序失败:', error);
+            }
+        }
+
+        // Delete image
+        async function deleteImage(imageId) {
+            try {
+                const response = await fetch(`${API_BASE}/api/session/${currentSessionId}/images/${imageId}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    images = data.images;
+                    renderImages();
+                }
+            } catch (error) {
+                console.error('删除图片失败:', error);
+            }
+        }
+
+        // Upload images
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        fileInput.addEventListener('change', () => {
+            handleFiles(fileInput.files);
+        });
+
+        // Audio upload handling
+        let audioFile = null;
+        let useDefaultAudio = true;  // 默认使用默认音乐
+        const audioInput = document.getElementById('audioInput');
+        const audioPreview = document.getElementById('audioPreview');
+        const audioName = document.getElementById('audioName');
+        const removeAudioBtn = document.getElementById('removeAudioBtn');
+        const useDefaultAudioBtn = document.getElementById('useDefaultAudio');
+        const uploadAudioBtn = document.getElementById('uploadAudioBtn');
+
+        // Initialize default audio state
+        audioName.textContent = '默认音乐 - 20秒纯旋律';
+        audioPreview.classList.remove('hidden');
+        removeAudioBtn.classList.remove('hidden');
+        useDefaultAudioBtn.classList.add('btn-primary');
+        useDefaultAudioBtn.classList.remove('btn-secondary');
+        uploadAudioBtn.classList.add('btn-secondary');
+        uploadAudioBtn.classList.remove('btn-primary');
+
+        // Use default audio
+        useDefaultAudioBtn.addEventListener('click', () => {
+            audioFile = null;
+            useDefaultAudio = true;
+            audioName.textContent = '默认音乐 - 20秒纯旋律';
+            audioPreview.classList.remove('hidden');
+            removeAudioBtn.classList.remove('hidden');
+            useDefaultAudioBtn.classList.remove('btn-secondary');
+            useDefaultAudioBtn.classList.add('btn-primary');
+            uploadAudioBtn.classList.remove('btn-primary');
+            uploadAudioBtn.classList.add('btn-secondary');
+        });
+
+        // Upload custom audio
+        uploadAudioBtn.addEventListener('click', () => audioInput.click());
+
+        audioInput.addEventListener('change', () => {
+            if (audioInput.files && audioInput.files[0]) {
+                audioFile = audioInput.files[0];
+                useDefaultAudio = false;
+                audioName.textContent = audioFile.name;
+                audioPreview.classList.remove('hidden');
+                removeAudioBtn.classList.remove('hidden');
+                uploadAudioBtn.classList.remove('btn-secondary');
+                uploadAudioBtn.classList.add('btn-primary');
+                useDefaultAudioBtn.classList.remove('btn-primary');
+                useDefaultAudioBtn.classList.add('btn-secondary');
+            }
+        });
+
+        removeAudioBtn.addEventListener('click', () => {
+            audioFile = null;
+            useDefaultAudio = false;
+            audioInput.value = '';
+            audioName.textContent = '';
+            audioPreview.classList.add('hidden');
+            removeAudioBtn.classList.add('hidden');
+            useDefaultAudioBtn.classList.remove('btn-primary');
+            useDefaultAudioBtn.classList.add('btn-secondary');
+            uploadAudioBtn.classList.remove('btn-primary');
+            uploadAudioBtn.classList.add('btn-secondary');
+        });
+
+        async function handleFiles(files) {
+            for (const file of files) {
+                if (!file.type.startsWith('image/')) continue;
+
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    try {
+                        const response = await fetch(`${API_BASE}/api/session/${currentSessionId}/images/add`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                image_data: e.target.result
+                            })
+                        });
+
+                        const data = await response.json();
+                        if (data.success) {
+                            images.push(data.image);
+                            renderImages();
+                        }
+                    } catch (error) {
+                        console.error('上传图片失败:', error);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Back to step 1
+        backToStep1.addEventListener('click', () => {
+            goToStep(1);
+        });
+
+        // Generate video
+        generateVideoBtn.addEventListener('click', async () => {
+            if (images.length === 0) {
+                alert('请至少保留一张图片');
+                return;
+            }
+
+            goToStep(3);
+
+            try {
+                const duration = parseFloat(document.getElementById('duration').value);
+                const editedPrice = document.getElementById('editPrice').value;
+
+                // 创建 FormData（支持音频文件）
+                const formData = new FormData();
+                formData.append('session_id', currentSessionId);
+                formData.append('duration_per_image', duration);
+                if (editedPrice) {
+                    formData.append('price', editedPrice);
+                }
+                if (audioFile) {
+                    formData.append('audio', audioFile);
+                }
+                // 传递是否使用默认音乐的标志
+                if (useDefaultAudio) {
+                    formData.append('use_default_audio', 'true');
+                }
+
+                const response = await fetch(`${API_BASE}/api/generate`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // 检查是否在排队中
+                    if (data.queued) {
+                        // 显示排队状态
+                        statusTitle.textContent = '任务已加入队列';
+                        statusText.textContent = data.message;
+                        currentTaskId = data.task_id;
+                        
+                        // 开始轮询队列状态
+                        pollTaskStatus(data.task_id);
+                    } else {
+                        // 直接生成成功
+                        currentTaskId = data.task_id;
+                        showVideoResult(data);
+                    }
+                } else {
+                    throw new Error(data.error || '生成失败');
+                }
+            } catch (error) {
+                statusIcon.className = 'status-icon error';
+                statusIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>';
+                statusTitle.textContent = '生成失败';
+                statusText.textContent = error.message;
+            }
+        });
+
+        // 轮询任务状态
+        let pollInterval = null;
+        
+        async function pollTaskStatus(taskId) {
+            if (pollInterval) clearInterval(pollInterval);
+            
+            pollInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`${API_BASE}/api/queue/status/${taskId}`);
+                    const data = await response.json();
+                    
+                    if (!data.success) {
+                        clearInterval(pollInterval);
+                        return;
+                    }
+                    
+                    // 更新状态显示
+                    if (data.status === 'pending') {
+                        statusTitle.textContent = `排队中... 您的位置: ${data.position}`;
+                        statusText.textContent = '请稍候，系统正在处理前面的任务';
+                    } else if (data.status === 'processing') {
+                        statusTitle.textContent = '正在生成视频...';
+                        statusText.textContent = '请稍候';
+                    } else if (data.status === 'completed') {
+                        clearInterval(pollInterval);
+                        // 获取任务结果
+                        showVideoResult(data.result || { task_id: taskId });
+                    } else if (data.status === 'failed') {
+                        clearInterval(pollInterval);
+                        statusIcon.className = 'status-icon error';
+                        statusIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>';
+                        statusTitle.textContent = '生成失败';
+                        statusText.textContent = data.error || '处理失败';
+                    }
+                } catch (error) {
+                    console.error('轮询状态失败:', error);
+                }
+            }, 2000);
+        }
+        
+        // 显示视频结果
+        function showVideoResult(data) {
+            // Show preview
+            if (data.preview_images && data.preview_images.length > 0) {
+                previewGrid.innerHTML = data.preview_images.map(url => `
+                    <div class="preview-item">
+                        <img src="${API_BASE}${url}" alt="Preview">
+                    </div>
+                `).join('');
+                previewGrid.classList.remove('hidden');
+            }
+
+            // Show video
+            videoPlayer.src = `${API_BASE}/api/stream/${currentTaskId}`;
+            downloadBtn.href = `${API_BASE}/api/download/${currentTaskId}`;
+            videoSection.classList.remove('hidden');
+            downloadBtn.classList.remove('hidden');
+
+            // Update status
+            statusIcon.className = 'status-icon success';
+            statusIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>';
+            statusTitle.textContent = '视频生成成功！';
+            statusText.textContent = `${images.length} 张图片`;
+        }
+
+        // Back to edit
+        backToEditBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            goToStep(2);
+        });
+
+        // New video
+        newVideoBtn.addEventListener('click', () => {
+            currentSessionId = null;
+            currentTaskId = null;
+            images = [];
+            document.getElementById('productUrl').value = '';
+            goToStep(1);
+        });
+
+        // Step navigation
+        function goToStep(step) {
+            // Hide all cards
+            step1Card.classList.add('hidden');
+            step2Card.classList.add('hidden');
+            step3Card.classList.add('hidden');
+
+            // Reset step indicators
+            [step1Number, step2Number, step3Number].forEach(el => {
+                el.classList.remove('active', 'done');
+            });
+            [stepLine, stepLine2].forEach(el => {
+                el.classList.remove('active');
+            });
+            document.getElementById('step1Label').classList.remove('active');
+            document.getElementById('step2Label').classList.remove('active');
+            document.getElementById('step3Label').classList.remove('active');
+
+            // Show target card and update indicators
+            if (step === 1) {
+                step1Card.classList.remove('hidden');
+                step1Number.classList.add('active');
+                document.getElementById('step1Label').classList.add('active');
+            } else if (step === 2) {
+                step2Card.classList.remove('hidden');
+                step1Number.classList.add('done');
+                step2Number.classList.add('active');
+                stepLine.classList.add('active');
+                document.getElementById('step1Label').classList.add('active');
+                document.getElementById('step2Label').classList.add('active');
+            } else if (step === 3) {
+                step3Card.classList.remove('hidden');
+                step1Number.classList.add('done');
+                step2Number.classList.add('done');
+                step3Number.classList.add('active');
+                stepLine.classList.add('active');
+                stepLine2.classList.add('active');
+                document.getElementById('step1Label').classList.add('active');
+                document.getElementById('step2Label').classList.add('active');
+                document.getElementById('step3Label').classList.add('active');
+            }
+        }
+
+        // Initialize
+        goToStep(1);
+    </script>
+</body>
+</html>
